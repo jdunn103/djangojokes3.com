@@ -1,6 +1,11 @@
-from django.views.generic import DetailView, ListView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from .models import Joke
+
+class JokeCreateView(CreateView):
+    model = Joke
+    fields = ['question', 'answer']
+
 
 class JokeListView(ListView):
     model = Joke
@@ -8,3 +13,8 @@ class JokeListView(ListView):
 
 class JokeDetailView(DetailView):
     model = Joke
+    
+
+class JokeUpdateView(UpdateView):
+    model = Joke
+    fields = ['question', 'answer']
