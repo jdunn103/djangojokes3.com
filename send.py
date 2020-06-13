@@ -6,7 +6,7 @@ from django.conf import settings
 from_email='jdunn103@gmail.com'
 to_emails='jdunn103@gmail.com'
 subject="SendGrid Test"
-html_content = '<h1Hello, from SendGrid!</h1'
+html_content = '<h1Hello, from SendGrid!</h1>'
 mail = Mail(
     from_email=from_email,
     to_emails=to_emails,
