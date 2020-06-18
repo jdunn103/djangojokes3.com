@@ -12,7 +12,7 @@
         <tr>
           <th>Joke</th>
           <th>Category</th>
-          <th>Actions</th>
+          <th>Creator</th>
         </tr>
       </thead>
       <tbody>
@@ -30,12 +30,16 @@
               {% endfor %}
             </td>
             <td>
+            {% if user == joke.user %}
               <a href="{% url 'joke-update' joke.slug %}">
                 <i class="fas fa-pencil-alt"></i>
               </a>
               <a href="{% url 'joke-delete' joke.slug %}">
                 <i class="far fa-trash-alt"></i>
               </a>
+            {% else %}
+              <small>by {{joke.user}}</small>
+            {% endif %}
             </td>
           </tr>
         {% endfor %}
