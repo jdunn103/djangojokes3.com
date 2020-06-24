@@ -32,7 +32,7 @@ class JokeCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
     model = Joke
     form_class = JokeForm
     success_message = 'Joke created.'
-
+    
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
@@ -40,6 +40,7 @@ class JokeCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
 
 class JokeListView(ListView):
     model = Joke
+    paginate_by = 10
 
 
 class JokeUpdateView(SuccessMessageMixin, UserPassesTestMixin, UpdateView):
