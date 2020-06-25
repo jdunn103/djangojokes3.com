@@ -1,4 +1,5 @@
 import json
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -7,8 +8,18 @@ from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView,
                                   ListView, UpdateView)
 
-from .models import Joke, JokeVote
 from .forms import JokeForm
+from .models import Joke, JokeVote
+
+class JokeCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
+    model = Joke
+    form_class = JokeForm
+    success_message = 'Joke created.'
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
+
 
 class JokeDeleteView(UserPassesTestMixin, DeleteView):
     model = Joke
@@ -18,36 +29,73 @@ class JokeDeleteView(UserPassesTestMixin, DeleteView):
         result = super().delete(request, *args, **kwargs)
         messages.success(self.request, 'Joke deleted.')
         return result
-    
+
     def test_func(self):
         obj = self.get_object()
         return self.request.user == obj.user
-
+    
 
 class JokeDetailView(DetailView):
     model = Joke
 
-
-class JokeCreateView(SuccessMessageMixin, LoginRequiredMixin, CreateView):
-    model = Joke
-    form_class = JokeForm
-    success_message = 'Joke created.'
-    
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
-
-
 class JokeListView(ListView):
     model = Joke
     paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        order_fields, order_key, direction = self.get_order_fields_key_and_dir()
+
+        context['order'] = order_key
+        context['direction'] = direction
+        
+        # get all but the last order key, which is 'default'
+        context['order_fields'] = list(order_fields.keys())[:-1]
+
+        return context
+    
+    def get_ordering(self):
+        order_fields, order_key, direction = self.get_order_fields_key_and_dir()
+        
+        ordering = order_fields[order_key]
+
+        # if direction is 'desc' or is invalid use descending order
+        if direction != 'asc':
+            ordering = '-' + ordering
+
+        return ordering
+
+    def get_order_fields_key_and_dir(self):
+        order_fields = self.get_order_fields()
+        default_order_key = order_fields['default_key']
+        order_key = self.request.GET.get('order', default_order_key)
+        direction = self.request.GET.get('direction', 'desc')
+        
+        # If order_key is invalid, use default
+        if order_key not in order_fields:
+            order_key = default_order_key
+
+        return (order_fields, order_key, direction)
+
+    
+    def get_order_fields(self):
+        # Returns a dict mapping friendly names to field names and lookups.
+        return {
+            'joke': 'question',
+            'category': 'category__category',
+            'creator': 'user__username',
+            'created': 'created',
+            'updated': 'updated',
+            'default_key': 'updated'
+        }
 
 
 class JokeUpdateView(SuccessMessageMixin, UserPassesTestMixin, UpdateView):
     model = Joke
     form_class = JokeForm
     success_message = 'Joke updated.'
-    
+
     def test_func(self):
         obj = self.get_object()
         return self.request.user == obj.user
