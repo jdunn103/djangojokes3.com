@@ -90,6 +90,24 @@ class JokeListView(ListView):
             'default_key': 'updated'
         }
 
+    def get_queryset(self):
+        ordering = self.get_ordering()
+        manager = Joke.objects
+        if 'slug' in self.kwargs:
+            slug = self.kwargs['slug']
+            if '/category' in self.request.path_info:
+                qs = manager.filter(category__slug=slug)
+            if '/tag' in self.request.path_info:
+                qs = manager.filter(tags__slug=slug)
+        elif 'username' in self.kwargs:
+            username = self.kwargs['username']
+            qs = manager.filter(user__username=username)
+        else:
+            qs = manager.all()
+            
+        return qs.order_by(ordering)
+
+
 
 class JokeUpdateView(SuccessMessageMixin, UserPassesTestMixin, UpdateView):
     model = Joke

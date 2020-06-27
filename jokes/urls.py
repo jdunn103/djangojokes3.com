@@ -10,4 +10,7 @@ urlpatterns = [
     path('joke/<slug>/', JokeDetailView.as_view(), name='joke'),
     path('joke/<slug>/vote/', vote, name='ajax-joke-vote'),
     path('', JokeListView.as_view(), name='jokes'),
+    path('category/<slug>/', JokeListView.as_view(), name='jokes-category'),
+    path('tag/<slug>/', JokeListView.as_view(), name='jokes-tag'),
+    path('creator/<username>/', JokeListView.as_view(), name='jokes-creator'),
 ]
