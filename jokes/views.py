@@ -3,6 +3,7 @@ import json
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
+from django.db.models import Q
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView,
@@ -93,7 +94,12 @@ class JokeListView(ListView):
     def get_queryset(self):
         ordering = self.get_ordering()
         manager = Joke.objects
-        if 'slug' in self.kwargs:
+        if 'q' in self.request.GET:
+            q = self.request.GET.get('q')
+            qs = manager.filter(
+                Q(question__icontains=q) | Q(answer__icontains=q)
+            )
+        elif 'slug' in self.kwargs:
             slug = self.kwargs['slug']
             if '/category' in self.request.path_info:
                 qs = manager.filter(category__slug=slug)
