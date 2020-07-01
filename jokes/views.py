@@ -111,7 +111,7 @@ class JokeListView(ListView):
         else:
             qs = manager.all()
             
-        return qs.order_by(ordering)
+        return qs.prefetch_related('category', 'user').order_by(ordering)
 
 
 

@@ -16,6 +16,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+INTERNAL_IPS = [ # Necessary for the Debug Toolbar
+'127.0.0.1',
+]
 
 # Application definition
 
@@ -35,6 +38,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'debug_toolbar',
 
     # Local apps
     'common.apps.CommonConfig',
@@ -65,6 +69,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL ='account_login' # Default: '/'
 ACCOUNT_USERNAME_REQUIRED = False # Default: True
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
