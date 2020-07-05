@@ -114,7 +114,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'
 EMAIL_HOST_PASSWORD = SENDGRID_API_KEY
-DEFAULT_FROM_EMAIL = 'ndunn219@gmail.com'
+DEFAULT_FROM_EMAIL = 'jdunn103@gmail.com'
 
 AUTHENTICATION_BACKENDS = (
     # Needed to login by username in Django admin, even w/o `allauth`
