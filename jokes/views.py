@@ -99,7 +99,7 @@ class JokeListView(ListView):
             qs = manager.filter(
                 Q(question__icontains=q) | Q(answer__icontains=q)
             )
-        elif 'slug' in self.kwargs:
+        if 'slug' in self.kwargs:
             slug = self.kwargs['slug']
             if '/category' in self.request.path_info:
                 qs = manager.filter(category__slug=slug)
